@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html manifest1="chemViewer.manifest1">
+<head>
+	<meta charset="UTF-8">
+	<title>3D化学分子式</title>
+
+	<script src="../libs/raphael-min.2.0.1.js"></script> <!-- 可以不用加入，除非浏览器不支持 canvas，或者是IE6-9 -->
+	<script src="../libs/Three.js"></script> <!-- 用于绘制WebGL或Canvas形式的3D分子 -->
+	<script src="../libs/kekule/kekule.js?modules=chemWidget,openbabel"></script>
+	<link rel="stylesheet" type="text/css" href="../libs/kekule/themes/default/kekule.css" />
+
+	<!-- 下面 script 里面的内容就算增加一个空格，也会改变显示的内容 或者 直接不能显示，不要随意更改 -->
+	<script name="mol1" id="mol1" type="chemical/x-mdl-molfile">
+Untitled Document-2
+  Kekule  07101201153D
+
+  6  5  0  0  0  0  0  0  0  0999 V2000
+   -0.3586    0.0000   -0.1337 C   0  0  0  0  0  0  0  0  0  0  0  0
+    1.0564    0.0000   -0.1337 O   0  0  0  0  0  0  0  0  0  0  0  0
+   -0.6779    0.0000   -1.1978 H   0  0  0  0  0  0  0  0  0  0  0  0
+   -0.6779    0.9530    0.3397 H   0  0  0  0  0  0  0  0  0  0  0  0
+   -0.6779   -0.9530    0.3397 H   0  0  0  0  0  0  0  0  0  0  0  0
+    1.3358    0.0000    0.7858 H   0  0  0  0  0  0  0  0  0  0  0  0
+  1  2  1  0
+  1  3  1  0
+  1  4  1  0
+  1  5  1  0
+  2  6  1  0
+M  END
+	</script>
+
+	<!-- <script>
+		var chemViewer;
+		function init()
+		{
+			chemViewer = Kekule.Widget.getWidgetById('chemViewer');
+			// adjust size
+			adjustSize();
+
+			window.onresize = adjustSize;
+
+			Kekule.Widget.getWidgetById('btnOpenBabel').addEventListener('execute', function(e){
+				Kekule.IO.enableOpenBabelFormats();
+			});
+		}
+		function adjustSize()
+		{
+			var dim = Kekule.HtmlElementUtils.getViewportDimension(document);
+			var headerDim = Kekule.HtmlElementUtils.getElemClientDimension(document.getElementById('header'));
+			chemViewer.setWidth(dim.width - 10 + 'px').setHeight(dim.height - 10 - headerDim.height + 'px');
+		}
+
+		Kekule.X.domReady(init);
+	</script> -->
+</head>
+<body>
+	<div id="chemViewer" style="width:650px;height:650px"
+			 data-widget="Kekule.ChemWidget.Viewer3D" data-enable-toolbar="true" data-auto-size="false" data-padding="20"
+			 data-toolbar-evoke-modes="[0]"
+			 data-chem-obj="url(#mol1)"></div>
+</body>
+</html>

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html manifest1="chemViewer.manifest1">
+<head>
+	<meta charset="UTF-8">
+	<title>元素周期表</title>
+
+	<script src="../libs/kekule/kekule.js?modules=chemWidget,openbabel"></script>
+	<link rel="stylesheet" type="text/css" href="../libs/kekule/themes/default/kekule.css" />
+
+</head>
+<body>
+	<div id="periodicTable1" data-widget="Kekule.ChemWidget.PeriodicTable"
+	  data-enable-select="true"
+	  data-displayed-components="['symbol', 'name', atomicNumber']">
+	</div>
+
+	<script>
+		// http://partridgejiang.github.io/Kekule.js/documents/tutorial/content/widgetIntro.html
+		var periodicTable = Kekule.Widget.getWidgetById('periodicTable1');
+		var widget = new Kekule.ChemWidget.PeriodicTable(periodicTable);
+		// var widget = new Kekule.ChemWidget.PeriodicTable(document.getElementById('div1'));
+	</script>
+</body>
+</html>

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html manifest1="chemViewer.manifest1">
+<head>
+	<meta charset="UTF-8">
+	<title>2D化学分子式 - 用代码创建mol的写法</title>
+
+	<script src="../libs/raphael-min.2.0.1.js"></script> <!-- 可以不用加入，除非浏览器不支持 canvas，或者是IE6-9  -->
+	<!-- <script src="../libs/Three.js"></script>  --><!-- 用于绘制3D分子 -->
+	<script src="../libs/kekule/kekule.js?modules=chemWidget,openbabel,render"></script> <!-- raphael.js 和 显示3D 的 three.js 必须放在kekule.js前面 -->
+	<link rel="stylesheet" type="text/css" href="../libs/kekule/themes/default/kekule.css" /> <!-- 如果上面的 kekule.js 引入了模块 widget 或者 chemwidget ，必须加入该样式 -->
+</head>
+
+<body>
+	<!-- id  width height 这三个属性是必须的，其他属性非必须 -->
+	<div id="chemViewer" style="width:250px;height:250px;border:1px solid red;" 
+			data-widget="Kekule.ChemWidget.Viewer2D" 
+			data-padding="20"></div>
+	<!-- 
+		data-enable-toolbar：true显示工具栏，false不显示，默认false
+		data-auto-size="false"  代表属性 autoSize；true代表整个部件的宽高根据分子式自适应；false代表部件的宽高固定
+		data-zoom：放大
+		data-background-color：背景颜色
+	-->
+
+	<p> 读取 mol</p>
+	<div id="loadMol" style="width:250px;height:250px;border:1px solid red;" 
+			data-widget="Kekule.ChemWidget.Viewer2D" 
+			data-padding="20" 
+			data-enable-toolbar="true"></div>
+
+	<p> composer编辑器 </p>
+	<div id="composer" style="width:800px;height:600px" 
+			data-widget="Kekule.Editor.Composer"></div>
+			
+	<p> 读取 composer编辑器 汇出的 mol</p>
+	<div id="loadComposerMol" style="width:350px;height:350px;border:1px solid red;" 
+			data-widget="Kekule.ChemWidget.Viewer2D" 
+			data-padding="20" 
+			data-enable-toolbar="true"></div>
+
+	<script>
+		// console.log(Kekule); //测试引入是否成功
+		function createMol() {	//创建一个 mol分子对象
+			var mol = new Kekule.Molecule(); 	// create molecule
+			// add atoms to molecule
+			mol.appendNode(new Kekule.Atom().setSymbol('C').setCoord2D({x: 0, y: 0.80}));
+			// explicit set mass number of an atom
+			mol.appendNode(new Kekule.Atom().setSymbol('C').setMassNumber(13).setCoord2D({x: -0.69, y: 0.40}));
+			mol.appendNode(new Kekule.Atom().setSymbol('C').setCoord2D({x: -0.69, y: -0.40}));
+			// a pseudo atom
+			mol.appendNode(new Kekule.Pseudoatom().setAtomType(Kekule.PseudoatomType.ANY).setCoord2D({x: 0, y: -0.80}));
+			mol.appendNode(new Kekule.Atom().setSymbol('C').setCoord2D({x: 0.69, y: -0.40}));
+			mol.appendNode(new Kekule.Atom().setSymbol('C').setCoord2D({x: 0.69, y: 0.40}));
+			// a variable atom
+			mol.appendNode(new Kekule.VariableAtom().setAllowedIsotopeIds(['F', 'Cl', 'Br']).setCoord2D({x: 1.39, y: 0.80}));
+
+			// add bonds to molecule
+			//   here a shortcut method appendBond(atomIndexes, bondOrder) is used
+			mol.appendBond([0, 1], 1);
+			mol.appendBond([1, 2], 2);
+			mol.appendBond([2, 3], 1);
+			mol.appendBond([3, 4], 2);
+			mol.appendBond([4, 5], 1);
+			mol.appendBond([5, 0], 2);
+			mol.appendBond([5, 6], 1);
+
+			return mol;
+		}
+
+		var mol = createMol();
+		// console.log(mol);
+		// console.log(mol.calcFormula().getText()));	//CO2
+
+		var element1 = document.getElementById('chemViewer');
+		// console.log(element1);
+
+		//1、在标签上创建 视图小部件Viewer
+		//写法一：直接在标签上创建
+		var chemViewer = new Kekule.ChemWidget.Viewer(element1);
+		//写法二（测试失败）：创建一个新的标签，挂载到标签的子标签上
+		// var chemViewer = new Kekule.ChemWidget.Viewer(document);
+		// chemViewer.setDimension('500px', '400px');
+		// chemViewer.appendToElem(document.getElementById('chemViewer')).setChemObj(molecule);
+		console.log(chemViewer);
+
+
+		//视图小部件 Viewer 用法 ，属性介绍：http://partridgejiang.github.io/Kekule.js/documents/tutorial/content/chemViewer.html#chem-viewer-widget
+		// chemViewer.setRenderType(Kekule.Render.RendererType.R3D);	//切换到3D模型，需要引入 Three.js -- <script src="../libs/Three.js
+		// chemViewer.setRenderType(Kekule.Render.RendererType.R2D);	//切换到2D模型
+		// chemViewer.setDimension('500px', '400px'); //设置宽高
+		// chemViewer.setZoom(2);  				// 放大2倍
+		// chemViewer.rotate2DBy(Math.PI / 2);  // 2D模型，旋转90度
+		// chemViewer.setAutoSize(true);  		// true代表整个部件的宽高根据分子式自适应；false代表部件的宽高固定
+		// chemViewer.backgroundColor = 'red';	// 背景颜色
+		// chemViewer.setEnableToolbar(true);  	// true-启用toolbar；false-隐藏toolbar
+		
+		// chemViewer 		//不可交互且无 toolbar的部件，效果等同图片，行内元素（inline）
+		//   .setEnableToolbar(false)
+		//   .setAutoSize(true)
+		//   .setEnableDirectInteraction(false)
+		//   .setEnableEdit(false)
+		//   .setToolButtons([]);
+
+		chemViewer.setChemObj(mol);	//在 标签的视图小部件Viewer 上加载 mol对象
+
+
+		//2、获取Viewer中的mol对象，并将mol对象转换成 cml/mol/smi 格式（http://partridgejiang.github.io/Kekule.js/documents/tutorial/content/chemViewer.html#setting-and-retrieving-object-in-viewer）
+		var molecule = chemViewer.getChemObj();						//获取mol对象
+		var cmlData = Kekule.IO.saveFormatData(molecule, 'cml');	//将mol对象转换为 cml格式的string文本；要读取或者写入分子，必须加载IO模块： script src="kekule.js?module=io"
+		// var cmlData = Kekule.IO.saveMimeData(mol, 'chemical/x-cml');  //另一种写法，等价上面的代码
+		// console.log(cmlData);
+
+		//3、将 cml/mol/smi 格式转换/读取为 mol对象（http://partridgejiang.github.io/Kekule.js/documents/tutorial/content/chemViewer.html#setting-and-retrieving-object-in-viewer）
+		// http://partridgejiang.github.io/Kekule.js/documents/tutorial/content/molIO.html
+		// 3.1 转换/读取的两种方法，方法一：通过变量直接读取
+		var myMolecule = Kekule.IO.loadFormatData(cmlData, 'cml');
+		// var myMolecule = Kekule.IO.loadMimeData(cmlData, 'chemical/x-cml'); //另一种写法，等价上面的代码
+		// 3.2 转换/读取的两种方法，方法二：从本地文件读取（http://partridgejiang.github.io/Kekule.js/documents/tutorial/content/molIO.html#loading-from-file）
+		// var url = 'data/mol2D/quinone.mol';
+		// Kekule.IO.loadUrlData(url, function(mol, success){ ... }
+
+		//4、在 标签的视图小部件Viewer 上加载 mol对象
+		var element2 = document.getElementById('loadMol');
+		var loadMolViewer = new Kekule.ChemWidget.Viewer(element2);
+		loadMolViewer.setChemObj(myMolecule);	//在 标签的视图小部件Viewer 上加载 mol对象
+
+
+
+
+		//5、创建编辑器（http://partridgejiang.github.io/Kekule.js/documents/tutorial/content/composer.html）
+		var composerChemViewer = new Kekule.Editor.Composer(document.getElementById('composer'));
+		composerChemViewer.setChemObj(mol); //在编辑器中加载 mol
+
+		var composerObj = composerChemViewer.getChemObj();	//获取Viewer中的mol对象
+		// var cmlData = Kekule.IO.saveFormatData(composerObj, 'cml');	//进一步将mol对象导出为 cml格式的文本
+		// var myMolecule = Kekule.IO.loadFormatData(cmlData, 'cml');	//读取 cml格式的文本，成为 mol对象
+
+		var loadComposerMolViewer = new Kekule.ChemWidget.Viewer(document.getElementById('loadComposerMol'));
+		loadComposerMolViewer.setChemObj(composerObj);	//在 标签的视图小部件Viewer 上加载 mol对象
+	</script>
+</body>
+</html>

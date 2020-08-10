@@ -30,6 +30,7 @@ In Node or Webpack environment, the Kekule namespace should be imported into the
 
 ```javascript
 var Kekule = require('kekule').Kekule;
+var Kekule = require('kekule');	//in Laravel，it would be this
 ```
 
 After installation (in web or in node.js environment), you can run a small test to ensure that the toolkit works properly:
